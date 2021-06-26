@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理</title>
+    {{ include "layouts/head.html" .}}
+</head>
+
+<body>
+    {{ include "layouts/navbar.html" .}}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2">
+                {{ include "u/sections/menu.html" .}}
+            </div>
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header">用户管理</div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>账号</th>
+                                    <th>账号状态</th>
+                                    <th>注册时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>demo</td>
+                                    <td><span class="badge bg-success">启用</span></td>
+                                    <td>2021-06-11 23:54:41</td>
+                                    <td><a class="btn btn-danger btn-sm" href="#" role="button">禁用</a></td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>demo</td>
+                                    <td><span class="badge bg-danger">禁用</span></td>
+                                    <td>2021-06-11 23:54:41</td>
+                                    <td><a class="btn btn-primary btn-sm" href="#" role="button">启用</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="text-center">
+                            <ul class="pagination">
+                                <li>
+                                    <a href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li>
+                                    <a href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ include "layouts/footer.html" .}}
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>留言板</title>
+    {{ include "layouts/head.html" .}}
+</head>
+
+<body>
+    {{ include "layouts/navbar.html" .}}
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">留言板</div>
+            <div class="card-body">
+
+                <form>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                        <label for="floatingTextarea">留言内容</label>
+                      </div>
+                </form>
+
+                <hr>
+
+                <ul>
+                    <li class="d-flex position-relative">
+                        <img class="flex-shrink-0 me-3" src="http://api.rosysun.cn/sjtx/?type=2&v=1"
+                                    width="96" height="96">
+                        <div>
+                            <h5 class="media-heading">张三</h5>
+                            <p>今天天气很好</p>
+                            <p class="text-muted">发布于：3小时前</p>
+                        </div>
+                    </li>
+                    <li class="d-flex position-relative">
+                        <img class="flex-shrink-0 me-3" src="http://api.rosysun.cn/sjtx/?type=2&v=2"
+                                    width="96" height="96">
+                        <div>
+                            <h5 class="media-heading">张三</h5>
+                            <p>今天天气很好</p>
+                            <p class="text-muted">发布于：3小时前</p>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="text-center">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active" aria-current="page">
+                          <a class="page-link" href="#">2</a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                          <a class="page-link" href="#">Next</a>
+                        </li>
+                      </ul>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    {{ include "layouts/footer.html" .}}
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>用户注册</title>
+    {{ include "layouts/head.html" .}}
+</head>
+
+<body>
+    {{ include "layouts/navbar.html" .}}
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">用户注册</div>
+            <div class="card-body">
+                <div class="row ">
+                    <form class="form col align-self-center" method="POST" action="./register">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">账号</label>
+                            <input type="text" class="form-control" name="username" placeholder="请输入用户名">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">密码</label>
+                            <input type="password" class="form-control" name="password" placeholder="请输入用户密码">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password_confirm" class="form-label">确认密码</label>
+                            <input type="password" class="form-control" name="password_confirm" placeholder="请输入确认密码">
+                        </div>
+                        <button type="submit" class="btn btn-primary form-control">注 册</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{ include "layouts/footer.html" .}}
+</body>
+
+</html>
