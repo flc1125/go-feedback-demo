@@ -17,4 +17,5 @@ type User struct {
 	UpdatedAt *gtime.Time `orm:"updated_at"      json:"updatedAt"` // 更新时间
 	IsAdmin   int         `orm:"is_admin"        json:"isAdmin"`   // 是否为管理员
 	Status    int         `orm:"status"          json:"status"`    // 是否可用
+	Black     int         `orm:"black"           json:"black"`     // 是否为黑名单
 }

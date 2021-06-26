@@ -28,6 +28,7 @@ type userColumns struct {
 	UpdatedAt string // 更新时间
 	IsAdmin   string // 是否为管理员
 	Status    string // 是否可用
+	Black     string // 是否为黑名单
 }
 
 func NewUserDao() *UserDao {
@@ -43,6 +44,7 @@ func NewUserDao() *UserDao {
 			UpdatedAt: "updated_at",
 			IsAdmin:   "is_admin",
 			Status:    "status",
+			Black:     "black",
 		},
 	}
 }

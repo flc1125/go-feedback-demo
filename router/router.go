@@ -16,6 +16,7 @@ func init() {
 
 		// 授权相关
 		group.GET("/login", controller.AuthController.Login)
+		group.POST("/login", controller.AuthController.DoLogin)
 		group.GET("/register", controller.AuthController.Register)
 		group.POST("/register", controller.AuthController.DoRegister)
 
