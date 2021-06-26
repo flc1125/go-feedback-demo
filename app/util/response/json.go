@@ -9,7 +9,7 @@ type JsonResponse struct {
 }
 
 func Json(r *ghttp.Request, status int, msg string, data ...interface{}) {
-	responseData := interface{}{nil}
+	responseData := interface{}(nil)
 
 	if len(data) > 0 {
 		responseData = data[0]
