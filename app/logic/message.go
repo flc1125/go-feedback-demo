@@ -1,1 +1,26 @@
 package logic
+
+import (
+	"feedback/app/dao"
+	"feedback/app/model"
+	"feedback/app/request"
+
+	"github.com/gogf/gf/net/ghttp"
+	"github.com/gogf/gf/os/gtime"
+)
+
+type messageLogic struct{}
+
+var MessageLogic = &messageLogic{}
+
+// 提交留言
+func (m *messageLogic) Message(r *ghttp.Request, req *request.MessagePostRequest) (*model.Message, error) {
+	message := &model.Message{
+		Uid:       0,
+		Content:   req.Content,
+		CreatedAt: gtime.Now(),
+	}
+	dao.Message.Insert(message)
+
+	return message, nil
+}

@@ -12,6 +12,6 @@ import (
 type Message struct {
 	Id        int         `orm:"id,primary" json:"id"`        //
 	Uid       int         `orm:"uid"        json:"uid"`       // 用户ID
-	Message   string      `orm:"message"    json:"message"`   // 留言内容
+	Content   string      `orm:"content"    json:"content"`   // 留言内容
 	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` // 创建时间
 }

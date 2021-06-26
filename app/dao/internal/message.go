@@ -23,7 +23,7 @@ type MessageDao struct {
 type messageColumns struct {
 	Id        string //
 	Uid       string // 用户ID
-	Message   string // 留言内容
+	Content   string // 留言内容
 	CreatedAt string // 创建时间
 }
 
@@ -35,7 +35,7 @@ func NewMessageDao() *MessageDao {
 		Columns: messageColumns{
 			Id:        "id",
 			Uid:       "uid",
-			Message:   "message",
+			Content:   "content",
 			CreatedAt: "created_at",
 		},
 	}

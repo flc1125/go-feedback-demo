@@ -25,6 +25,9 @@ func init() {
 			group.GET("/users", u.UUserController.Users)
 		})
 
+		// 用户留言
+		group.POST("/message", controller.MessageController.Message)
+
 		group.ALL("/hello", api.Hello)
 	})
 }
