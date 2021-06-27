@@ -24,6 +24,8 @@ func init() {
 		group.Group("/u", func(group *ghttp.RouterGroup) {
 			group.GET("/", u.UUserController.Index)
 			group.GET("/users", u.UUserController.Users)
+			group.GET("/user-status", u.UUserController.UserStatus)
+			group.GET("/user-black", u.UUserController.UserBlack)
 		})
 
 		// 用户留言

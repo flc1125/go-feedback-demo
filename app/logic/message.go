@@ -5,6 +5,7 @@ import (
 	"feedback/app/model"
 	"feedback/app/request"
 
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gtime"
 )
@@ -26,10 +27,19 @@ func (m *messageLogic) Message(r *ghttp.Request, req *request.MessagePostRequest
 }
 
 // 留言列表
-func (m *messageLogic) Messages(r *ghttp.Request) ([]*model.Message, error) {
+func (m *messageLogic) Messages(r *ghttp.Request) (g.Map, error) {
 	var messages []*model.Message
+	per_size := 4
 
-	dao.Message.WithAll().OrderDesc("id").Structs(&messages)
+	total, _ := dao.Message.FindCount()
 
-	return messages, nil
+	page := r.GetPage(total, per_size)
+
+	dao.Message.WithAll().Limit((page.CurrentPage-1)*per_size, per_size).OrderDesc("id").Structs(&messages)
+
+	return g.Map{
+		"total": total,
+		"items": messages,
+		"page":  page.GetContent(4),
+	}, nil
 }

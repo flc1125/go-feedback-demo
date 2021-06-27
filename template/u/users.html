@@ -58,8 +58,17 @@
                                     </td>
                                     <td>{{ $item.CreatedAt }}</td>
                                     <td>
-                                        <a class="btn btn-outline-danger btn-sm" href="#" role="button">禁用账号</a>
-                                        <a class="btn btn-outline-danger btn-sm" href="#" role="button">禁用留言</a>
+                                        {{ if eq $item.Status 1}}
+                                        <a class="btn btn-outline-danger btn-sm" href="/u/user-status?id={{ $item.Id }}&s=0" role="button">禁用账号</a>
+                                        {{ else }}
+                                        <a class="btn btn-outline-success btn-sm" href="/u/user-status?id={{ $item.Id }}&s=1" role="button">启用账号</a>
+                                        {{ end }}
+
+                                        {{ if eq $item.Black 0}}
+                                        <a class="btn btn-outline-danger btn-sm" href="/u/user-black?id={{ $item.Id }}&s=1" role="button">禁用留言</a>
+                                        {{ else }}
+                                        <a class="btn btn-outline-success btn-sm" href="/u/user-black?id={{ $item.Id }}&s=0" role="button">启用留言</a>
+                                        {{ end }}
                                     </td>
                                 </tr>
                                 {{ end }}

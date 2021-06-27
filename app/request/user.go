@@ -9,6 +9,16 @@ type UserRegisterRequest struct {
 
 // 提交登录参数
 type UserLoginRequest struct {
-	Username string `p:"username"  v:"required"`
-	Password string `p:"password" v:"required"`
+	Username string `p:"username"  v:"required#请输入账号"`
+	Password string `p:"password" v:"required#请输入密码"`
+}
+
+type UserStatusRequest struct {
+	Id string `p:"id"  v:"required#ID错误"`
+	S  int    `p:"s" v:"required#参数错误"`
+}
+
+type UserBlackRequest struct {
+	Id string `p:"id"  v:"required#ID错误"`
+	S  int    `p:"s" v:"required#参数错误"`
 }

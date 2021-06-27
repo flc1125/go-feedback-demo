@@ -77,3 +77,31 @@ func (u *userLogic) Users(r *ghttp.Request) ([]*model.User, error) {
 
 	return users, nil
 }
+
+func (u *userLogic) UserStatus(req *request.UserStatusRequest) error {
+	status := 0
+
+	if req.S == 1 {
+		status = 1
+	}
+
+	dao.User.Where("id", req.Id).Update(g.Map{
+		"status": status,
+	})
+
+	return nil
+}
+
+func (u *userLogic) UserBlack(req *request.UserBlackRequest) error {
+	status := 0
+
+	if req.S == 1 {
+		status = 1
+	}
+
+	dao.User.Where("id", req.Id).Update(g.Map{
+		"black": status,
+	})
+
+	return nil
+}
