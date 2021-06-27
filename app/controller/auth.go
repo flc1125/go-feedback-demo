@@ -52,5 +52,6 @@ func (*authController) DoRegister(r *ghttp.Request) {
 }
 
 func (*authController) Logout(r *ghttp.Request) {
-	// ***
+	r.Session.Remove("user")
+	response.Jump(r, 1, "登出成功", "/")
 }

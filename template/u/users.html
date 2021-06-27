@@ -33,7 +33,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{ range $item := .users }}
+                                {{ range $item := .items }}
                                 <tr>
                                     <td>{{ $item.Id }}</td>
                                     <td>
@@ -59,15 +59,19 @@
                                     <td>{{ $item.CreatedAt }}</td>
                                     <td>
                                         {{ if eq $item.Status 1}}
-                                        <a class="btn btn-outline-danger btn-sm" href="/u/user-status?id={{ $item.Id }}&s=0" role="button">禁用账号</a>
+                                        <a class="btn btn-outline-danger btn-sm"
+                                            href="/u/user-status?id={{ $item.Id }}&s=0" role="button">禁用账号</a>
                                         {{ else }}
-                                        <a class="btn btn-outline-success btn-sm" href="/u/user-status?id={{ $item.Id }}&s=1" role="button">启用账号</a>
+                                        <a class="btn btn-outline-success btn-sm"
+                                            href="/u/user-status?id={{ $item.Id }}&s=1" role="button">启用账号</a>
                                         {{ end }}
 
                                         {{ if eq $item.Black 0}}
-                                        <a class="btn btn-outline-danger btn-sm" href="/u/user-black?id={{ $item.Id }}&s=1" role="button">禁用留言</a>
+                                        <a class="btn btn-outline-danger btn-sm"
+                                            href="/u/user-black?id={{ $item.Id }}&s=1" role="button">禁用留言</a>
                                         {{ else }}
-                                        <a class="btn btn-outline-success btn-sm" href="/u/user-black?id={{ $item.Id }}&s=0" role="button">启用留言</a>
+                                        <a class="btn btn-outline-success btn-sm"
+                                            href="/u/user-black?id={{ $item.Id }}&s=0" role="button">启用留言</a>
                                         {{ end }}
                                     </td>
                                 </tr>
@@ -76,23 +80,40 @@
                         </table>
 
                         <div class="text-center">
-                            <ul class="pagination">
-                                <li>
-                                    <a href="#" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <li><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">5</a></li>
-                                <li>
-                                    <a href="#" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
+                            <style>
+                                .page {
+                                    display: flex
+                                }
+
+                                .page .GPageSpan {
+                                    padding: .375rem .75rem;
+                                    margin-left: -1px;
+                                    position: relative;
+                                    display: block;
+                                    text-decoration: none;
+                                    border: 1px solid transition;
+                                }
+
+                                .page a {
+                                    border-radius: .25rem;
+                                    padding: .375rem .75rem;
+                                    margin-left: 3px;
+                                    position: relative;
+                                    display: block;
+                                    color: #0d6efd;
+                                    text-decoration: none;
+                                    background-color: #fff;
+                                    border: 1px solid #dee2e6;
+                                    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+                                }
+
+                                .page a:hover {
+                                    color: #0a58ca;
+                                    background-color: #e9ecef;
+                                    border-color: #dee2e6;
+                                }
+                            </style>
+                            <div class="page">{{ .page }}</div>
                         </div>
                     </div>
                 </div>

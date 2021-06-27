@@ -14,20 +14,20 @@ var UUserController = uUserController{}
 type uUserController struct{}
 
 func (*uUserController) Index(r *ghttp.Request) {
-	r.Response.WriteTpl("u/index.html", g.Map{})
+	r.Response.WriteTpl("u/index.html", g.Map{
+		"_menu": "index",
+	})
 }
 
 func (*uUserController) Users(r *ghttp.Request) {
-	users, err := logic.UserLogic.Users(r)
+	maps, err := logic.UserLogic.Users(r)
 	if err != nil {
 		response.Jump(r, 0, err.Error())
 	}
 
-	// r.Response.WriteJson(users)
+	maps["_menu"] = "users"
 
-	r.Response.WriteTpl("u/users.html", g.Map{
-		"users": users,
-	})
+	r.Response.WriteTpl("u/users.html", maps)
 }
 
 func (*uUserController) UserStatus(r *ghttp.Request) {

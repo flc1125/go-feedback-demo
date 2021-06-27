@@ -13,7 +13,8 @@
         <div class="card">
             <div class="card-header">留言板</div>
             <div class="card-body">
-
+                {{ if ne .Session.user nil }}
+                {{ if eq .Session.user.Black 0 }}
                 <form method="post" action="/message">
                     <div class="input-group mb-3">
                         <input type="text" name="content" class="form-control" placeholder="说点什么……"
@@ -21,8 +22,9 @@
                         <button class="btn btn-outline-secondary" type="submit" id="button-addon2">提 交</button>
                     </div>
                 </form>
-
                 <hr>
+                {{ end }}
+                {{ end }}
 
                 {{ range $item := .items }}
                 <div class="d-flex position-relative">

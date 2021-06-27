@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"errors"
 	"feedback/app/dao"
 	"feedback/app/model"
 	"feedback/app/request"
@@ -16,8 +17,16 @@ var MessageLogic = &messageLogic{}
 
 // 提交留言
 func (m *messageLogic) Message(r *ghttp.Request, req *request.MessagePostRequest) (*model.Message, error) {
+	var user *model.User
+	r.Session.GetVar("user").Struct(&user)
+
+	// 黑名单不可留言
+	if user.Black == 1 {
+		return nil, errors.New("黑名单用户不可留言")
+	}
+
 	message := &model.Message{
-		Uid:       0,
+		Uid:       user.Id,
 		Content:   req.Content,
 		CreatedAt: gtime.Now(),
 	}

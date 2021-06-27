@@ -3,22 +3,26 @@
         <a class="navbar-brand" href="/"><i class="bi bi-chat-text-fill"></i> 留言板</a>
 
         <div class="d-flex justify-content-end">
+            {{ if eq .Session.user nil }}
             <a class="btn btn-outline-primary me-2" href="/login">登 录</a>
             <a class="btn btn-primary" href="/register">注 册</a>
-
+            {{ else }}
             <div class="dropdown">
                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="navbarDropdownMenuLink"
                     data-bs-toggle="dropdown" aria-expanded="true">
                     <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-                    张三
+                    {{ .Session.user.Username }}
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <li><a class="dropdown-item" href="/u/">用户中心</a></li>
+                    {{ if eq .Session.user.IsAdmin 1}}
                     <li><a class="dropdown-item" href="/u/users">用户管理</a></li>
+                    {{ end }}
                     <li class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/logout">退出登录</a></li>
                 </ul>
             </div>
+            {{ end }}
         </div>
 
     </div>

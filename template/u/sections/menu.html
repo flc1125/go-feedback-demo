@@ -1,6 +1,8 @@
 <div class="list-group">
-    <a href="/u/" class="list-group-item list-group-item-action active" aria-current="true">
+    <a href="/u/" class="list-group-item list-group-item-action {{ if eq ._menu "index" }}active{{ end }}" aria-current="true">
         用户中心
     </a>
-    <a href="/u/users" class="list-group-item list-group-item-action">用户管理</a>
+    {{ if eq .Session.user.IsAdmin 1}}
+    <a href="/u/users" class="list-group-item list-group-item-action {{ if eq ._menu "users" }}active{{ end }}">用户管理</a>
+    {{ end }}
 </div>

@@ -70,12 +70,21 @@ func (u *userLogic) Login(r *ghttp.Request, req *request.UserLoginRequest) (*mod
 	return user, nil
 }
 
-func (u *userLogic) Users(r *ghttp.Request) ([]*model.User, error) {
+func (u *userLogic) Users(r *ghttp.Request) (g.Map, error) {
 	var users []*model.User
+	per_size := 8
 
-	dao.User.Structs(&users)
+	total, _ := dao.User.FindCount()
 
-	return users, nil
+	page := r.GetPage(total, per_size)
+
+	dao.User.Limit((page.CurrentPage-1)*per_size, per_size).Structs(&users)
+
+	return g.Map{
+		"total": total,
+		"items": users,
+		"page":  page.GetContent(4),
+	}, nil
 }
 
 func (u *userLogic) UserStatus(req *request.UserStatusRequest) error {
