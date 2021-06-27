@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>错误提示</title>
+    <title>{{ if eq .j.Status 1 }}成功提示{{ else }}错误提示{{ end }}</title>
     {{ include "layouts/head.html" .}}
 </head>
 

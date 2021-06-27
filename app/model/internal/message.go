@@ -14,4 +14,5 @@ type Message struct {
 	Uid       int         `orm:"uid"        json:"uid"`       // 用户ID
 	Content   string      `orm:"content"    json:"content"`   // 留言内容
 	CreatedAt *gtime.Time `orm:"created_at" json:"createdAt"` // 创建时间
+	User      *User       `orm:"with:id=uid"`
 }

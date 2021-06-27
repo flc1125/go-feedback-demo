@@ -24,3 +24,12 @@ func (m *messageLogic) Message(r *ghttp.Request, req *request.MessagePostRequest
 
 	return message, nil
 }
+
+// 留言列表
+func (m *messageLogic) Messages(r *ghttp.Request) ([]*model.Message, error) {
+	var messages []*model.Message
+
+	dao.Message.WithAll().OrderDesc("id").Structs(&messages)
+
+	return messages, nil
+}

@@ -27,25 +27,42 @@
                                     <th>#</th>
                                     <th>账号</th>
                                     <th>账号状态</th>
+                                    <th>留言权限</th>
                                     <th>注册时间</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {{ range $item := .users }}
                                 <tr>
-                                    <td>1</td>
-                                    <td>demo</td>
-                                    <td><span class="badge bg-success">启用</span></td>
-                                    <td>2021-06-11 23:54:41</td>
-                                    <td><a class="btn btn-danger btn-sm" href="#" role="button">禁用</a></td>
+                                    <td>{{ $item.Id }}</td>
+                                    <td>
+                                        {{ $item.Username }}
+                                        {{ if eq $item.IsAdmin 1 }}
+                                        <span class="badge bg-secondary">Admin</span>
+                                        {{ end }}
+                                    </td>
+                                    <td>
+                                        {{ if eq $item.Status 1 }}
+                                        <span class="badge bg-success">启用</span>
+                                        {{ else }}
+                                        <span class="badge bg-danger">禁用</span>
+                                        {{ end }}
+                                    </td>
+                                    <td>
+                                        {{ if eq $item.Black 1 }}
+                                        <span class="badge bg-danger">禁用</span>
+                                        {{ else }}
+                                        <span class="badge bg-success">启用</span>
+                                        {{ end }}
+                                    </td>
+                                    <td>{{ $item.CreatedAt }}</td>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm" href="#" role="button">禁用账号</a>
+                                        <a class="btn btn-outline-danger btn-sm" href="#" role="button">禁用留言</a>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>demo</td>
-                                    <td><span class="badge bg-danger">禁用</span></td>
-                                    <td>2021-06-11 23:54:41</td>
-                                    <td><a class="btn btn-primary btn-sm" href="#" role="button">启用</a></td>
-                                </tr>
+                                {{ end }}
                             </tbody>
                         </table>
 

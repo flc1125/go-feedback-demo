@@ -28,7 +28,7 @@ func (*authController) DoLogin(r *ghttp.Request) {
 		response.Jump(r, 0, err.Error())
 	}
 
-	response.Jump(r, 1, "登录成功", "/u/index")
+	response.Jump(r, 1, "登录成功", "/u/")
 }
 
 // 注册页面

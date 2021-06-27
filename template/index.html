@@ -16,33 +16,25 @@
 
                 <form method="post" action="/message">
                     <div class="input-group mb-3">
-                        <input type="text" name="content" class="form-control" placeholder="说点什么……" aria-describedby="button-addon2">
+                        <input type="text" name="content" class="form-control" placeholder="说点什么……"
+                            aria-describedby="button-addon2">
                         <button class="btn btn-outline-secondary" type="submit" id="button-addon2">提 交</button>
                     </div>
                 </form>
 
                 <hr>
 
-                <ul>
-                    <li class="d-flex position-relative">
-                        <img class="flex-shrink-0 me-3" src="http://api.rosysun.cn/sjtx/?type=2&v=1" width="96"
-                            height="96">
-                        <div>
-                            <h5 class="media-heading">张三</h5>
-                            <p>今天天气很好</p>
-                            <p class="text-muted">发布于：3小时前</p>
-                        </div>
-                    </li>
-                    <li class="d-flex position-relative">
-                        <img class="flex-shrink-0 me-3" src="http://api.rosysun.cn/sjtx/?type=2&v=2" width="96"
-                            height="96">
-                        <div>
-                            <h5 class="media-heading">张三</h5>
-                            <p>今天天气很好</p>
-                            <p class="text-muted">发布于：3小时前</p>
-                        </div>
-                    </li>
-                </ul>
+                {{ range $item := .messages }}
+                <div class="d-flex position-relative">
+                    <img class="flex-shrink-0 me-3 rounded-circle" src="http://api.rosysun.cn/sjtx/?type=2&v={{ $item.User.Id }}" width="96" height="96">
+                    <div>
+                        <h5 class="media-heading">{{ $item.User.Username }}</h5>
+                        <p>{{ $item.Content }}</p>
+                        <small class="text-muted">发布于：{{ $item.CreatedAt | personDate }}</small>
+                    </div>
+                </div>
+                <hr>
+                {{ end }}
 
                 <div class="text-center">
                     <ul class="pagination">

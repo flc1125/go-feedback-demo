@@ -22,6 +22,7 @@ func init() {
 
 		// 用户中心
 		group.Group("/u", func(group *ghttp.RouterGroup) {
+			group.GET("/", u.UUserController.Index)
 			group.GET("/users", u.UUserController.Users)
 		})
 

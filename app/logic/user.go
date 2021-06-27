@@ -69,3 +69,11 @@ func (u *userLogic) Login(r *ghttp.Request, req *request.UserLoginRequest) (*mod
 
 	return user, nil
 }
+
+func (u *userLogic) Users(r *ghttp.Request) ([]*model.User, error) {
+	var users []*model.User
+
+	dao.User.Structs(&users)
+
+	return users, nil
+}
