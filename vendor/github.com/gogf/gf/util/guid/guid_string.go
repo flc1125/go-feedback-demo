@@ -7,22 +7,25 @@
 package guid
 
 import (
-	"github.com/gogf/gf/container/gtype"
-	"github.com/gogf/gf/encoding/ghash"
-	"github.com/gogf/gf/net/gipv4"
-	"github.com/gogf/gf/util/gconv"
-	"github.com/gogf/gf/util/grand"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/gogf/gf/container/gtype"
+	"github.com/gogf/gf/encoding/ghash"
+	"github.com/gogf/gf/net/gipv4"
+	"github.com/gogf/gf/util/grand"
+)
+
+const (
+	sequenceMax   = uint32(46655)                          // Sequence max("zzz").
+	randomStrBase = "0123456789abcdefghijklmnopqrstuvwxyz" // Random chars string(36 bytes).
 )
 
 var (
-	sequence      gtype.Uint32                             // Sequence for unique purpose of current process.
-	sequenceMax   = uint32(46655)                          // Sequence max("zzz").
-	randomStrBase = "0123456789abcdefghijklmnopqrstuvwxyz" // Random chars string(36 bytes).
-	macAddrStr    = "0000000"                              // MAC addresses hash result in 7 bytes.
-	processIdStr  = "0000"                                 // Process id in 4 bytes.
+	sequence     gtype.Uint32 // Sequence for unique purpose of current process.
+	macAddrStr   = "0000000"  // MAC addresses hash result in 7 bytes.
+	processIdStr = "0000"     // Process id in 4 bytes.
 )
 
 // init initializes several fixed local variable.
@@ -91,7 +94,7 @@ func S(data ...[]byte) string {
 	} else {
 		panic("too many data parts, it should be no more than 2 parts")
 	}
-	return gconv.UnsafeBytesToStr(b)
+	return string(b)
 }
 
 // getSequence increases and returns the sequence string in 3 bytes.

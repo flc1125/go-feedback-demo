@@ -9,8 +9,6 @@ package client
 import (
 	"io/ioutil"
 	"net/http"
-
-	"github.com/gogf/gf/util/gconv"
 )
 
 // Response is the struct for client request response.
@@ -65,14 +63,13 @@ func (r *Response) ReadAll() []byte {
 
 // ReadAllString retrieves and returns the response content as string.
 func (r *Response) ReadAllString() string {
-	return gconv.UnsafeBytesToStr(r.ReadAll())
+	return string(r.ReadAll())
 }
 
 // Close closes the response when it will never be used.
 func (r *Response) Close() error {
-	if r == nil || r.Response == nil || r.Response.Close {
+	if r == nil || r.Response == nil {
 		return nil
 	}
-	r.Response.Close = true
 	return r.Response.Body.Close()
 }

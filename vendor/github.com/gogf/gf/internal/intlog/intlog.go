@@ -8,11 +8,16 @@
 package intlog
 
 import (
+	"bytes"
+	"context"
 	"fmt"
-	"github.com/gogf/gf/debug/gdebug"
-	"github.com/gogf/gf/internal/utils"
 	"path/filepath"
 	"time"
+
+	"go.opentelemetry.io/otel/trace"
+
+	"github.com/gogf/gf/debug/gdebug"
+	"github.com/gogf/gf/internal/utils"
 )
 
 const (
@@ -39,51 +44,99 @@ func SetEnabled(enabled bool) {
 
 // Print prints `v` with newline using fmt.Println.
 // The parameter `v` can be multiple variables.
-func Print(v ...interface{}) {
+func Print(ctx context.Context, v ...interface{}) {
 	if !isGFDebug {
 		return
 	}
-	fmt.Println(append([]interface{}{now(), "[INTE]", file()}, v...)...)
+	doPrint(ctx, fmt.Sprint(v...), false)
 }
 
 // Printf prints `v` with format `format` using fmt.Printf.
 // The parameter `v` can be multiple variables.
-func Printf(format string, v ...interface{}) {
+func Printf(ctx context.Context, format string, v ...interface{}) {
 	if !isGFDebug {
 		return
 	}
-	fmt.Printf(now()+" [INTE] "+file()+" "+format+"\n", v...)
+	doPrint(ctx, fmt.Sprintf(format, v...), false)
 }
 
 // Error prints `v` with newline using fmt.Println.
 // The parameter `v` can be multiple variables.
-func Error(v ...interface{}) {
+func Error(ctx context.Context, v ...interface{}) {
 	if !isGFDebug {
 		return
 	}
-	array := append([]interface{}{now(), "[INTE]", file()}, v...)
-	array = append(array, "\n"+gdebug.StackWithFilter(stackFilterKey))
-	fmt.Println(array...)
+	doPrint(ctx, fmt.Sprint(v...), true)
 }
 
 // Errorf prints `v` with format `format` using fmt.Printf.
-func Errorf(format string, v ...interface{}) {
+func Errorf(ctx context.Context, format string, v ...interface{}) {
 	if !isGFDebug {
 		return
 	}
-	fmt.Printf(
-		now()+" [INTE] "+file()+" "+format+"\n%s\n",
-		append(v, gdebug.StackWithFilter(stackFilterKey))...,
-	)
+	doPrint(ctx, fmt.Sprintf(format, v...), true)
 }
 
-// now returns current time string.
-func now() string {
-	return time.Now().Format("2006-01-02 15:04:05.000")
+// PrintFunc prints the output from function `f`.
+// It only calls function `f` if debug mode is enabled.
+func PrintFunc(ctx context.Context, f func() string) {
+	if !isGFDebug {
+		return
+	}
+	s := f()
+	if s == "" {
+		return
+	}
+	doPrint(ctx, s, false)
+}
+
+// ErrorFunc prints the output from function `f`.
+// It only calls function `f` if debug mode is enabled.
+func ErrorFunc(ctx context.Context, f func() string) {
+	if !isGFDebug {
+		return
+	}
+	s := f()
+	if s == "" {
+		return
+	}
+	doPrint(ctx, s, true)
+}
+
+func doPrint(ctx context.Context, content string, stack bool) {
+	if !isGFDebug {
+		return
+	}
+	buffer := bytes.NewBuffer(nil)
+	buffer.WriteString(time.Now().Format("2006-01-02 15:04:05.000"))
+	buffer.WriteString(" [INTE] ")
+	buffer.WriteString(file())
+	buffer.WriteString(" ")
+	if s := traceIdStr(ctx); s != "" {
+		buffer.WriteString(s + " ")
+	}
+	buffer.WriteString(content)
+	buffer.WriteString("\n")
+	if stack {
+		buffer.WriteString(gdebug.StackWithFilter([]string{stackFilterKey}))
+	}
+	fmt.Print(buffer.String())
+}
+
+// traceIdStr retrieves and returns the trace id string for logging output.
+func traceIdStr(ctx context.Context) string {
+	if ctx == nil {
+		return ""
+	}
+	spanCtx := trace.SpanContextFromContext(ctx)
+	if traceId := spanCtx.TraceID(); traceId.IsValid() {
+		return "{" + traceId.String() + "}"
+	}
+	return ""
 }
 
 // file returns caller file name along with its line number.
 func file() string {
-	_, p, l := gdebug.CallerWithFilter(stackFilterKey)
+	_, p, l := gdebug.CallerWithFilter([]string{stackFilterKey})
 	return fmt.Sprintf(`%s:%d`, filepath.Base(p), l)
 }

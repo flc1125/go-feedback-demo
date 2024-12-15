@@ -7,11 +7,12 @@
 package gfsnotify
 
 import (
+	"context"
 	"github.com/gogf/gf/container/glist"
 	"github.com/gogf/gf/internal/intlog"
 )
 
-// watchLoop starts the loop for event listening fro underlying inotify monitor.
+// watchLoop starts the loop for event listening from underlying inotify monitor.
 func (w *Watcher) watchLoop() {
 	go func() {
 		for {
@@ -34,7 +35,7 @@ func (w *Watcher) watchLoop() {
 				}, repeatEventFilterDuration)
 
 			case err := <-w.watcher.Errors:
-				intlog.Error(err)
+				intlog.Error(context.TODO(), err)
 			}
 		}
 	}()
@@ -60,9 +61,9 @@ func (w *Watcher) eventLoop() {
 						// It adds the path back to monitor.
 						// We need no worry about the repeat adding.
 						if err := w.watcher.Add(event.Path); err != nil {
-							intlog.Error(err)
+							intlog.Error(context.TODO(), err)
 						} else {
-							intlog.Printf("fake remove event, watcher re-adds monitor for: %s", event.Path)
+							intlog.Printf(context.TODO(), "fake remove event, watcher re-adds monitor for: %s", event.Path)
 						}
 						// Change the event to RENAME, which means it renames itself to its origin name.
 						event.Op = RENAME
@@ -76,9 +77,9 @@ func (w *Watcher) eventLoop() {
 						// It might lost the monitoring for the path, so we add the path back to monitor.
 						// We need no worry about the repeat adding.
 						if err := w.watcher.Add(event.Path); err != nil {
-							intlog.Error(err)
+							intlog.Error(context.TODO(), err)
 						} else {
-							intlog.Printf("fake rename event, watcher re-adds monitor for: %s", event.Path)
+							intlog.Printf(context.TODO(), "fake rename event, watcher re-adds monitor for: %s", event.Path)
 						}
 						// Change the event to CHMOD.
 						event.Op = CHMOD
@@ -94,18 +95,18 @@ func (w *Watcher) eventLoop() {
 						for _, subPath := range fileAllDirs(event.Path) {
 							if fileIsDir(subPath) {
 								if err := w.watcher.Add(subPath); err != nil {
-									intlog.Error(err)
+									intlog.Error(context.TODO(), err)
 								} else {
-									intlog.Printf("folder creation event, watcher adds monitor for: %s", subPath)
+									intlog.Printf(context.TODO(), "folder creation event, watcher adds monitor for: %s", subPath)
 								}
 							}
 						}
 					} else {
 						// If it's a file, it directly adds it to monitor.
 						if err := w.watcher.Add(event.Path); err != nil {
-							intlog.Error(err)
+							intlog.Error(context.TODO(), err)
 						} else {
-							intlog.Printf("file creation event, watcher adds monitor for: %s", event.Path)
+							intlog.Printf(context.TODO(), "file creation event, watcher adds monitor for: %s", event.Path)
 						}
 					}
 
@@ -133,7 +134,7 @@ func (w *Watcher) eventLoop() {
 	}()
 }
 
-// getCallbacks searches and returns all callbacks with given <path>.
+// getCallbacks searches and returns all callbacks with given `path`.
 // It also searches its parents for callbacks if they're recursive.
 func (w *Watcher) getCallbacks(path string) (callbacks []*Callback) {
 	// Firstly add the callbacks of itself.
