@@ -44,7 +44,7 @@ func doMapConvert(value interface{}, recursive bool, tags ...string) map[string]
 	newTags := StructTagPriority
 	switch len(tags) {
 	case 0:
-		// No need handle.
+		// No need handling.
 	case 1:
 		newTags = append(strings.Split(tags[0], ","), StructTagPriority...)
 	default:
@@ -166,7 +166,7 @@ func doMapConvert(value interface{}, recursive bool, tags ...string) map[string]
 					dataMap[String(reflectValue.Index(i).Interface())] = nil
 				}
 			}
-		case reflect.Map, reflect.Struct:
+		case reflect.Map, reflect.Struct, reflect.Interface:
 			convertedValue := doMapConvertForMapOrStructValue(true, value, recursive, newTags...)
 			if m, ok := convertedValue.(map[string]interface{}); ok {
 				return m
@@ -301,7 +301,7 @@ func doMapConvertForMapOrStructValue(isRoot bool, value interface{}, recursive b
 						// It means this attribute field has desired tag.
 						dataMap[mapKey] = doMapConvertForMapOrStructValue(false, rvAttrInterface, true, tags...)
 					} else {
-						dataMap[mapKey] = doMapConvertForMapOrStructValue(false, rvAttrInterface, false, tags...)
+						dataMap[mapKey] = doMapConvertForMapOrStructValue(false, rvAttrInterface, recursive, tags...)
 					}
 
 				// The struct attribute is type of slice.

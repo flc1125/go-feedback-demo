@@ -2,11 +2,13 @@
 github.com/BurntSushi/toml
 # github.com/clbanning/mxj v1.8.5-0.20200714211355-ff02cfb8ea28
 github.com/clbanning/mxj
+# github.com/fatih/color v1.12.0
+github.com/fatih/color
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
-# github.com/go-sql-driver/mysql v1.5.0
+# github.com/go-sql-driver/mysql v1.6.0
 github.com/go-sql-driver/mysql
-# github.com/gogf/gf v1.16.2
+# github.com/gogf/gf v1.16.9
 ## explicit
 github.com/gogf/gf
 github.com/gogf/gf/container/garray
@@ -36,6 +38,7 @@ github.com/gogf/gf/encoding/gtoml
 github.com/gogf/gf/encoding/gurl
 github.com/gogf/gf/encoding/gxml
 github.com/gogf/gf/encoding/gyaml
+github.com/gogf/gf/errors/gcode
 github.com/gogf/gf/errors/gerror
 github.com/gogf/gf/frame/g
 github.com/gogf/gf/frame/gins
@@ -60,6 +63,7 @@ github.com/gogf/gf/net/gudp
 github.com/gogf/gf/os/gcache
 github.com/gogf/gf/os/gcfg
 github.com/gogf/gf/os/gcmd
+github.com/gogf/gf/os/gctx
 github.com/gogf/gf/os/genv
 github.com/gogf/gf/os/gfile
 github.com/gogf/gf/os/gfpool
@@ -85,20 +89,21 @@ github.com/gogf/gf/util/grand
 github.com/gogf/gf/util/guid
 github.com/gogf/gf/util/gutil
 github.com/gogf/gf/util/gvalid
-# github.com/gomodule/redigo v2.0.0+incompatible
-github.com/gomodule/redigo/internal
+# github.com/gomodule/redigo v1.8.5
 github.com/gomodule/redigo/redis
-# github.com/gorilla/websocket v1.4.1
+# github.com/gorilla/websocket v1.4.2
 github.com/gorilla/websocket
-# github.com/grokify/html-strip-tags-go v0.0.0-20190921062105-daaa06bf1aaf
+# github.com/grokify/html-strip-tags-go v0.0.1
 github.com/grokify/html-strip-tags-go
-# github.com/mattn/go-runewidth v0.0.10
+# github.com/mattn/go-colorable v0.1.8
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.12
+github.com/mattn/go-isatty
+# github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
 # github.com/olekukonko/tablewriter v0.0.5
 github.com/olekukonko/tablewriter
-# github.com/rivo/uniseg v0.1.0
-github.com/rivo/uniseg
-# go.opentelemetry.io/otel v0.19.0
+# go.opentelemetry.io/otel v1.0.0
 go.opentelemetry.io/otel
 go.opentelemetry.io/otel/attribute
 go.opentelemetry.io/otel/baggage
@@ -106,26 +111,20 @@ go.opentelemetry.io/otel/codes
 go.opentelemetry.io/otel/internal
 go.opentelemetry.io/otel/internal/baggage
 go.opentelemetry.io/otel/internal/global
-go.opentelemetry.io/otel/internal/trace/noop
 go.opentelemetry.io/otel/propagation
-go.opentelemetry.io/otel/unit
-# go.opentelemetry.io/otel/metric v0.19.0
-go.opentelemetry.io/otel/metric
-go.opentelemetry.io/otel/metric/number
-go.opentelemetry.io/otel/metric/registry
-# go.opentelemetry.io/otel/trace v0.19.0
+# go.opentelemetry.io/otel/trace v1.0.0
 go.opentelemetry.io/otel/trace
 # golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 ## explicit
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
-# golang.org/x/net v0.0.0-20201031054903-ff519b6c9102
+# golang.org/x/net v0.0.0-20210520170846-37e1c6afe023
 golang.org/x/net/internal/socks
 golang.org/x/net/proxy
-# golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
+# golang.org/x/sys v0.0.0-20210423082822-04245dca01da
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.4
+# golang.org/x/text v0.3.6
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
 golang.org/x/text/encoding/ianaindex
@@ -139,5 +138,5 @@ golang.org/x/text/encoding/unicode
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/runes
 golang.org/x/text/transform
-# gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 gopkg.in/yaml.v3

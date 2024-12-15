@@ -36,6 +36,10 @@ type (
 	FuncMap = map[string]interface{} // FuncMap is type for custom template functions.
 )
 
+const (
+	commandEnvKeyForPath = "gf.gview.path"
+)
+
 var (
 	// Default view object.
 	defaultViewObj *View
@@ -57,7 +61,7 @@ func ParseContent(ctx context.Context, content string, params ...Params) (string
 }
 
 // New returns a new view object.
-// The parameter <path> specifies the template directory path to load template files.
+// The parameter `path` specifies the template directory path to load template files.
 func New(path ...string) *View {
 	view := &View{
 		paths:        garray.NewStrArray(),
@@ -68,14 +72,14 @@ func New(path ...string) *View {
 	}
 	if len(path) > 0 && len(path[0]) > 0 {
 		if err := view.SetPath(path[0]); err != nil {
-			intlog.Error(err)
+			intlog.Error(context.TODO(), err)
 		}
 	} else {
 		// Customized dir path from env/cmd.
-		if envPath := gcmd.GetOptWithEnv("gf.gview.path").String(); envPath != "" {
+		if envPath := gcmd.GetOptWithEnv(commandEnvKeyForPath).String(); envPath != "" {
 			if gfile.Exists(envPath) {
 				if err := view.SetPath(envPath); err != nil {
-					intlog.Error(err)
+					intlog.Error(context.TODO(), err)
 				}
 			} else {
 				if errorPrint() {
@@ -85,18 +89,18 @@ func New(path ...string) *View {
 		} else {
 			// Dir path of working dir.
 			if err := view.SetPath(gfile.Pwd()); err != nil {
-				intlog.Error(err)
+				intlog.Error(context.TODO(), err)
 			}
 			// Dir path of binary.
 			if selfPath := gfile.SelfDir(); selfPath != "" && gfile.Exists(selfPath) {
 				if err := view.AddPath(selfPath); err != nil {
-					intlog.Error(err)
+					intlog.Error(context.TODO(), err)
 				}
 			}
 			// Dir path of main package.
 			if mainPath := gfile.MainPkgPath(); mainPath != "" && gfile.Exists(mainPath) {
 				if err := view.AddPath(mainPath); err != nil {
-					intlog.Error(err)
+					intlog.Error(context.TODO(), err)
 				}
 			}
 		}
@@ -139,6 +143,10 @@ func New(path ...string) *View {
 		"map":        view.buildInFuncMap,
 		"maps":       view.buildInFuncMaps,
 		"json":       view.buildInFuncJson,
+		"plus":       view.buildInFuncPlus,
+		"minus":      view.buildInFuncMinus,
+		"times":      view.buildInFuncTimes,
+		"divide":     view.buildInFuncDivide,
 	})
 
 	return view

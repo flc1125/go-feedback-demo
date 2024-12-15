@@ -10,6 +10,8 @@ package gdb
 import (
 	"context"
 	"database/sql"
+	"github.com/gogf/gf/errors/gcode"
+	"github.com/gogf/gf/errors/gerror"
 
 	"github.com/gogf/gf/os/gtime"
 )
@@ -17,7 +19,7 @@ import (
 // Query commits one query SQL to underlying driver and returns the execution result.
 // It is most commonly used for data querying.
 func (c *Core) Query(sql string, args ...interface{}) (rows *sql.Rows, err error) {
-	return c.DoQuery(c.GetCtx(), nil, sql, args...)
+	return c.db.DoQuery(c.GetCtx(), nil, sql, args...)
 }
 
 // DoQuery commits the sql string and its arguments to underlying driver
@@ -25,19 +27,29 @@ func (c *Core) Query(sql string, args ...interface{}) (rows *sql.Rows, err error
 func (c *Core) DoQuery(ctx context.Context, link Link, sql string, args ...interface{}) (rows *sql.Rows, err error) {
 	// Transaction checks.
 	if link == nil {
-		if link, err = c.SlaveLink(); err != nil {
+		if tx := TXFromCtx(ctx, c.db.GetGroup()); tx != nil {
+			// Firstly, check and retrieve transaction link from context.
+			link = &txLink{tx.tx}
+		} else if link, err = c.SlaveLink(); err != nil {
+			// Or else it creates one from master node.
 			return nil, err
 		}
 	} else if !link.IsTransaction() {
+		// If current link is not transaction link, it checks and retrieves transaction from context.
 		if tx := TXFromCtx(ctx, c.db.GetGroup()); tx != nil {
 			link = &txLink{tx.tx}
 		}
 	}
-	// Link execution.
-	sql, args = formatSql(sql, args)
-	sql, args = c.db.HandleSqlBeforeCommit(ctx, link, sql, args)
+
 	if c.GetConfig().QueryTimeout > 0 {
 		ctx, _ = context.WithTimeout(ctx, c.GetConfig().QueryTimeout)
+	}
+
+	// Link execution.
+	sql, args = formatSql(sql, args)
+	sql, args, err = c.db.DoCommit(ctx, link, sql, args)
+	if err != nil {
+		return nil, err
 	}
 	mTime1 := gtime.TimestampMilli()
 	rows, err = link.QueryContext(ctx, sql, args...)
@@ -69,7 +81,7 @@ func (c *Core) DoQuery(ctx context.Context, link Link, sql string, args ...inter
 // Exec commits one query SQL to underlying driver and returns the execution result.
 // It is most commonly used for data inserting and updating.
 func (c *Core) Exec(sql string, args ...interface{}) (result sql.Result, err error) {
-	return c.DoExec(c.GetCtx(), nil, sql, args...)
+	return c.db.DoExec(c.GetCtx(), nil, sql, args...)
 }
 
 // DoExec commits the sql string and its arguments to underlying driver
@@ -77,23 +89,32 @@ func (c *Core) Exec(sql string, args ...interface{}) (result sql.Result, err err
 func (c *Core) DoExec(ctx context.Context, link Link, sql string, args ...interface{}) (result sql.Result, err error) {
 	// Transaction checks.
 	if link == nil {
-		if link, err = c.MasterLink(); err != nil {
+		if tx := TXFromCtx(ctx, c.db.GetGroup()); tx != nil {
+			// Firstly, check and retrieve transaction link from context.
+			link = &txLink{tx.tx}
+		} else if link, err = c.MasterLink(); err != nil {
+			// Or else it creates one from master node.
 			return nil, err
 		}
 	} else if !link.IsTransaction() {
+		// If current link is not transaction link, it checks and retrieves transaction from context.
 		if tx := TXFromCtx(ctx, c.db.GetGroup()); tx != nil {
 			link = &txLink{tx.tx}
 		}
 	}
-	// Link execution.
-	sql, args = formatSql(sql, args)
-	sql, args = c.db.HandleSqlBeforeCommit(ctx, link, sql, args)
+
 	if c.GetConfig().ExecTimeout > 0 {
 		var cancelFunc context.CancelFunc
 		ctx, cancelFunc = context.WithTimeout(ctx, c.GetConfig().ExecTimeout)
 		defer cancelFunc()
 	}
 
+	// Link execution.
+	sql, args = formatSql(sql, args)
+	sql, args, err = c.db.DoCommit(ctx, link, sql, args)
+	if err != nil {
+		return nil, err
+	}
 	mTime1 := gtime.TimestampMilli()
 	if !c.db.GetDryRun() {
 		result, err = link.ExecContext(ctx, sql, args...)
@@ -120,6 +141,18 @@ func (c *Core) DoExec(ctx context.Context, link Link, sql string, args ...interf
 	return result, formatError(err, sql, args...)
 }
 
+// DoCommit is a hook function, which deals with the sql string before it's committed to underlying driver.
+// The parameter `link` specifies the current database connection operation object. You can modify the sql
+// string `sql` and its arguments `args` as you wish before they're committed to driver.
+func (c *Core) DoCommit(ctx context.Context, link Link, sql string, args []interface{}) (newSql string, newArgs []interface{}, err error) {
+	if c.db.GetConfig().CtxStrict {
+		if v := ctx.Value(ctxStrictKeyName); v == nil {
+			return sql, args, gerror.NewCode(gcode.CodeMissingParameter, ctxStrictErrorStr)
+		}
+	}
+	return sql, args, nil
+}
+
 // Prepare creates a prepared statement for later queries or executions.
 // Multiple queries or executions may be run concurrently from the
 // returned statement.
@@ -142,20 +175,41 @@ func (c *Core) Prepare(sql string, execOnMaster ...bool) (*Stmt, error) {
 			return nil, err
 		}
 	}
-	return c.DoPrepare(c.GetCtx(), link, sql)
+	return c.db.DoPrepare(c.GetCtx(), link, sql)
 }
 
 // DoPrepare calls prepare function on given link object and returns the statement object.
 func (c *Core) DoPrepare(ctx context.Context, link Link, sql string) (*Stmt, error) {
-	if link != nil && !link.IsTransaction() {
+	// Transaction checks.
+	if link == nil {
+		if tx := TXFromCtx(ctx, c.db.GetGroup()); tx != nil {
+			// Firstly, check and retrieve transaction link from context.
+			link = &txLink{tx.tx}
+		} else {
+			// Or else it creates one from master node.
+			var err error
+			if link, err = c.MasterLink(); err != nil {
+				return nil, err
+			}
+		}
+	} else if !link.IsTransaction() {
+		// If current link is not transaction link, it checks and retrieves transaction from context.
 		if tx := TXFromCtx(ctx, c.db.GetGroup()); tx != nil {
 			link = &txLink{tx.tx}
 		}
 	}
+
 	if c.GetConfig().PrepareTimeout > 0 {
 		// DO NOT USE cancel function in prepare statement.
 		ctx, _ = context.WithTimeout(ctx, c.GetConfig().PrepareTimeout)
 	}
+
+	if c.db.GetConfig().CtxStrict {
+		if v := ctx.Value(ctxStrictKeyName); v == nil {
+			return nil, gerror.NewCode(gcode.CodeMissingParameter, ctxStrictErrorStr)
+		}
+	}
+
 	var (
 		mTime1    = gtime.TimestampMilli()
 		stmt, err = link.PrepareContext(ctx, sql)

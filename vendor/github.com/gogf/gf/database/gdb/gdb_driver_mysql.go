@@ -10,11 +10,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
+	"github.com/gogf/gf/errors/gcode"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/internal/intlog"
 	"github.com/gogf/gf/text/gregex"
 	"github.com/gogf/gf/text/gstr"
+	"net/url"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -32,12 +33,12 @@ func (d *DriverMysql) New(core *Core, node *ConfigNode) (DB, error) {
 	}, nil
 }
 
-// Open creates and returns a underlying sql.DB object for mysql.
+// Open creates and returns an underlying sql.DB object for mysql.
 // Note that it converts time.Time argument to local timezone in default.
 func (d *DriverMysql) Open(config *ConfigNode) (*sql.DB, error) {
 	var source string
-	if config.LinkInfo != "" {
-		source = config.LinkInfo
+	if config.Link != "" {
+		source = config.Link
 		// Custom changing the schema in runtime.
 		if config.Name != "" {
 			source, _ = gregex.ReplaceString(`/([\w\.\-]+)+`, "/"+config.Name, source)
@@ -47,8 +48,11 @@ func (d *DriverMysql) Open(config *ConfigNode) (*sql.DB, error) {
 			"%s:%s@tcp(%s:%s)/%s?charset=%s",
 			config.User, config.Pass, config.Host, config.Port, config.Name, config.Charset,
 		)
+		if config.Timezone != "" {
+			source = fmt.Sprintf("%s&loc=%s", source, url.QueryEscape(config.Timezone))
+		}
 	}
-	intlog.Printf("Open: %s", source)
+	intlog.Printf(d.GetCtx(), "Open: %s", source)
 	if db, err := sql.Open("mysql", source); err == nil {
 		return db, nil
 	} else {
@@ -56,10 +60,10 @@ func (d *DriverMysql) Open(config *ConfigNode) (*sql.DB, error) {
 	}
 }
 
-// FilteredLinkInfo retrieves and returns filtered `linkInfo` that can be using for
+// FilteredLink retrieves and returns filtered `linkInfo` that can be using for
 // logging or tracing purpose.
-func (d *DriverMysql) FilteredLinkInfo() string {
-	linkInfo := d.GetConfig().LinkInfo
+func (d *DriverMysql) FilteredLink() string {
+	linkInfo := d.GetConfig().Link
 	if linkInfo == "" {
 		return ""
 	}
@@ -76,9 +80,9 @@ func (d *DriverMysql) GetChars() (charLeft string, charRight string) {
 	return "`", "`"
 }
 
-// HandleSqlBeforeCommit handles the sql before posts it to database.
-func (d *DriverMysql) HandleSqlBeforeCommit(ctx context.Context, link Link, sql string, args []interface{}) (string, []interface{}) {
-	return sql, args
+// DoCommit handles the sql before posts it to database.
+func (d *DriverMysql) DoCommit(ctx context.Context, link Link, sql string, args []interface{}) (newSql string, newArgs []interface{}, err error) {
+	return d.Core.DoCommit(ctx, link, sql, args)
 }
 
 // Tables retrieves and returns the tables of current schema.
@@ -117,7 +121,7 @@ func (d *DriverMysql) TableFields(ctx context.Context, table string, schema ...s
 	charL, charR := d.GetChars()
 	table = gstr.Trim(table, charL+charR)
 	if gstr.Contains(table, " ") {
-		return nil, gerror.New("function TableFields supports only single table operations")
+		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "function TableFields supports only single table operations")
 	}
 	useSchema := d.schema.Val()
 	if len(schema) > 0 && schema[0] != "" {

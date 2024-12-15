@@ -7,6 +7,8 @@
 package ghttp
 
 import (
+	"github.com/gogf/gf/errors/gcode"
+	"github.com/gogf/gf/internal/intlog"
 	"net/http"
 	"os"
 	"sort"
@@ -66,9 +68,13 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			if exception := recover(); exception != nil {
 				request.Response.WriteStatus(http.StatusInternalServerError)
 				if err, ok := exception.(error); ok {
-					s.handleErrorLog(gerror.Wrap(err, ""), request)
+					if code := gerror.Code(err); code != gcode.CodeNil {
+						s.handleErrorLog(err, request)
+					} else {
+						s.handleErrorLog(gerror.WrapCodeSkip(gcode.CodeInternalError, 1, err, ""), request)
+					}
 				} else {
-					s.handleErrorLog(gerror.Newf("%v", exception), request)
+					s.handleErrorLog(gerror.NewCodeSkipf(gcode.CodeInternalError, 1, "%+v", exception), request)
 				}
 			}
 		}
@@ -80,9 +86,15 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		// Close the request and response body
 		// to release the file descriptor in time.
-		_ = request.Request.Body.Close()
+		err := request.Request.Body.Close()
+		if err != nil {
+			intlog.Error(request.Context(), err)
+		}
 		if request.Request.Response != nil {
-			_ = request.Request.Response.Body.Close()
+			err = request.Request.Response.Body.Close()
+			if err != nil {
+				intlog.Error(request.Context(), err)
+			}
 		}
 	}()
 
@@ -188,9 +200,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // searchStaticFile searches the file with given URI.
 // It returns a file struct specifying the file information.
 func (s *Server) searchStaticFile(uri string) *staticFile {
-	var file *gres.File
-	var path string
-	var dir bool
+	var (
+		file *gres.File
+		path string
+		dir  bool
+	)
 	// Firstly search the StaticPaths mapping.
 	if len(s.config.StaticPaths) > 0 {
 		for _, item := range s.config.StaticPaths {
